@@ -6,11 +6,6 @@ TO START:
 docker compose pull
 ```
 
-
-```bash
-docker compose up db
-```
-
 watch this and wait to see when it is ready, then ctrl + C to stop.
 
 Then do this
@@ -172,5 +167,5 @@ curl -fsSL https://code-server.dev/install.sh | sh
 # To have systemd start code-server now and restart on boot:
 sudo systemctl enable --now code-server@$USER
 ```
-configurations for code-server are in `~/.config/code-server/config.yaml`. Make sure `$CODE_SERVER_PORT` matches your port in your config.
+configurations for code-server are in `~/.config/code-server/config.yaml`. Make sure `$CODE_SERVER_PORT` matches your port in your caddy donfig.
 
