@@ -1,0 +1,78 @@
+services:
+
+  phoenix:
+    image: arizephoenix/phoenix:latest
+    depends_on:
+      db:
+        condition: service_healthy
+    ports:
+      - 6006:6006
+      - 4317:4317
+    environment:
+      - PHOENIX_SQL_DATABASE_URL=postgresql://postgres:${POSTGRES_PASSWORD}@db:5432/phoenix
+      - PHOENIX_ENABLE_AUTH=${PHOENIX_ENABLE_AUTH}
+      - PHOENIX_SECRET=${PHOENIX_SECRET}
+
+  open-webui:
+    image: ghcr.io/open-webui/open-webui:main
+    ports:
+      - "3007:8080"
+    environment:
+      - DATABASE_URL=postgresql://postgres:${POSTGRES_PASSWORD}@db:5432/openwebui
+    volumes:
+      - ${HOME}/open-webui:/app/backend/data
+    extra_hosts:
+      - "host.docker.internal:host-gateway"
+    depends_on:
+      db:
+        condition: service_healthy
+
+  litellm:
+    image: ghcr.io/berriai/litellm:main-v1.74.9.rc.1
+    ports:
+      - "4000:4000"
+    volumes:
+      - ./litellm/config.yaml:/config.yaml:ro
+    restart: always
+    environment:
+      HF_API_KEY: ${HF_API_KEY}
+      PHOENIX_API_KEY: ${PHOENIX_API_KEY}
+      DATABASE_URL: postgresql://postgres:${POSTGRES_PASSWORD}@db:5432/litellm
+    extra_hosts:
+      - "host.docker.internal:host-gateway"
+    depends_on:
+      db:
+        condition: service_healthy
+
+    command: ["--config", "/config.yaml"]
+
+  searxng:
+    image: searxng/searxng
+    ports:
+      - "8082:8080"
+    environment:
+      - BASE_URL=http://0.0.0.0:8082
+      - INSTANCE_NAME=the-index
+    volumes:
+      - ${SEARXNG_DIR}/searxng:/etc/searxng
+
+  db:
+    image: postgres
+    restart: always
+    environment:
+      - POSTGRES_USER=postgres
+      - POSTGRES_PASSWORD=${POSTGRES_PASSWORD}
+    ports:
+      - 5432
+    volumes:
+      - ${HOME}/postgres:/var/lib/postgresql/data
+      - ./init-db.sql:/docker-entrypoint-initdb.d/init-db.sql:ro
+    healthcheck:
+      test: ["CMD-SHELL", "pg_isready -U postgres"]
+      interval: 5s
+      timeout: 5s
+      retries: 5
+
+volumes:
+  database_data:
+    driver: local

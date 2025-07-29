@@ -1,0 +1,57 @@
+model_list:
+  - model_name: Kimi-K2
+    litellm_params:
+      model: openai/moonshotai/Kimi-K2-Instruct
+      api_base: https://router.huggingface.co/v1
+      api_key: 
+  - model_name: DeepSeek-R1-0528
+    litellm_params:
+      model: openai/deepseek/deepseek-r1-0528
+      api_base: https://router.huggingface.co/v1
+      api_key: 
+  - model_name: GLM-4.5
+    litellm_params:
+      model: openai/zai-org/GLM-4.5
+      api_base: https://router.huggingface.co/v1
+      api_key: 
+
+  - model_name: deepseek-r1:8b
+    litellm_params:
+      model: openai/deepseek-r1:8b
+      api_base: http://host.docker.internal:11434/v1
+      api_key: ollama
+  
+  - model_name: gemma3n:e4b
+    litellm_params:
+      model: openai/gemma3n:e4b
+      api_base: http://host.docker.internal:11434/v1
+      api_key: ollama
+
+  - model_name: qwen3:latest
+    litellm_params:
+      model: openai/qwen3:latest
+      api_base: http://host.docker.internal:11434/v1
+      api_key: ollama
+
+  - model_name: granite-3.1:8b
+    litellm_params:
+      model: openai/hf.co/bartowski/granite-3.1-8b-instruct-GGUF:Q4_K_M
+      api_base: http://host.docker.internal:11434/v1
+      api_key: ollama
+
+  - model_name: SmolLM2-1.7B
+    litellm_params:
+      model: openai/hf.co/bartowski/SmolLM2-1.7B-Instruct-GGUF:Q4_K_M
+      api_base: http://host.docker.internal:11434/v1
+      api_key: ollama
+
+
+litellm_settings:
+  verbose: true
+  debug: true
+  callbacks: ["arize_phoenix"]
+
+environment_variables:
+  PHOENIX_API_KEY: 
+  PHOENIX_COLLECTOR_ENDPOINT: "http://phoenix:4317"
+  PHOENIX_COLLECTOR_HTTP_ENDPOINT: "http://phoenix:6006/v1/traces"
